@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\DataForm;
 use app\models\RegisterForm;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use Yii;
@@ -19,12 +20,35 @@ class DataFormController extends Controller
 
     public function actionIndex()
     {
-        $data = RegisterForm::find()
-            ->with('dataForm')
-            ->all();
+        $query = RegisterForm::find()
+            ->with('dataForm');
+
+        $search = Yii::$app->request->get('search');
+
+        if (!empty($search)) {
+            $query->andWhere([
+                'or',
+                ['ilike', 'nama_pasien', $search],
+                ['ilike', 'CAST(nik AS TEXT)', $search],
+                ['ilike', 'CAST(no_rekam_medis AS TEXT)', $search],
+                ['ilike', 'CAST(no_registrasi AS TEXT)', $search],
+            ]);
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => false,
+            'sort' => false,
+        ]);
+
+        if (Yii::$app->request->isAjax) {
+            return $this->renderPartial('_table', [
+                'dataProvider' => $dataProvider,
+            ]);
+        }
 
         return $this->render('index', [
-            'data' => $data,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -42,15 +66,10 @@ class DataFormController extends Controller
 
         if (Yii::$app->request->isPost) {
             $formData = Yii::$app->request->post('form_data');
-
             $data->data = json_encode($formData);
-
             $data->id_form = 1;
-
             $data->create_time_at = date('Y-m-d H:i:s');
-
             $data->create_by = $formData['petugas_nama'] ?? null;
-
             if ($data->save()) {
                 Yii::$app->session->setFlash('success', 'Data Pengkajian Berhasil Disimpan.');
 
