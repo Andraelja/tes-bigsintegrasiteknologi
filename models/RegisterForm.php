@@ -65,4 +65,11 @@ class RegisterForm extends \yii\db\ActiveRecord
             'update_time_at' => 'Update Time At',
         ];
     }
+
+    public function getDataForm()
+    {
+        return $this
+            ->hasOne(DataForm::class, ['id_registrasi' => 'id_registrasi'])
+            ->andOnCondition(['data_form.is_delete' => false]);
+    }
 }

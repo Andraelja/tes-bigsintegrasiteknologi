@@ -19,7 +19,9 @@ class DataFormController extends Controller
 
     public function actionIndex()
     {
-        $data = RegisterForm::find()->all();
+        $data = RegisterForm::find()
+            ->with('dataForm')
+            ->all();
 
         return $this->render('index', [
             'data' => $data,
@@ -82,5 +84,64 @@ class DataFormController extends Controller
             'data' => $data,
             'registrasi' => $registrasi
         ]);
+    }
+
+    public function actionUpdate($id)
+    {
+        $model = DataForm::findOne($id);
+
+        if (!$model) {
+            throw new NotFoundHttpException('Data tidak ditemukan.');
+        }
+
+        $registrasi = RegisterForm::findOne($model->id_registrasi);
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+
+            if (isset($post['form_data'])) {
+                $model->data = json_encode($post['form_data']);
+                $model->update_by = Yii::$app->user->id ?? 1;
+                $model->update_time_at = date('Y-m-d H:i:s');
+
+                if ($model->save(false)) {
+                    Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
+        return $this->render('edit', [
+            'model' => $model,
+            'registrasi' => $registrasi,
+        ]);
+    }
+
+    public function actionDelete($id)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            $dataForm = DataForm::findOne($id);
+            if (!$dataForm) {
+                throw new NotFoundHttpException('Data form tidak ditemukan.');
+            }
+
+            $registrasi = RegisterForm::findOne($dataForm->id_registrasi);
+            if (!$registrasi) {
+                throw new NotFoundHttpException('Data registrasi tidak ditemukan.');
+            }
+            $dataForm->delete();
+            $registrasi->delete();
+            $transaction->commit();
+
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('error', 'Gagal menghapus data.');
+            throw $e;
+        }
+
+        return $this->redirect(['index']);
     }
 }

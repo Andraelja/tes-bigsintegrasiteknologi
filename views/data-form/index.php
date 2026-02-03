@@ -5,7 +5,6 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var app\models\RegisterForm[] $data */
-
 $this->title = 'Manajemen Registrasi Pasien';
 ?>
 
@@ -66,22 +65,50 @@ $this->title = 'Manajemen Registrasi Pasien';
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group shadow-sm rounded">
-                                                    <?= Html::a('<i class="bi bi-pencil">Input</i>', ['create', 'id' => $row->id_registrasi], [
-                                                        'class' => 'btn btn-white btn-sm text-success mx-2',
-                                                        'title' => 'Input Data'
-                                                    ]) ?>
-                                                    <?= Html::a('<i class="bi bi-pencil">Edit</i>', ['update', 'id' => $row->id_registrasi], [
-                                                        'class' => 'btn btn-white btn-sm text-warning mx-2',
-                                                        'title' => 'Edit Data'
-                                                    ]) ?>
-                                                    <?= Html::a('<i class="bi bi-trash">Hapus</i>', ['delete', 'id' => $row->id_registrasi], [
-                                                        'class' => 'btn btn-white btn-sm text-danger mx-2',
-                                                        'data' => [
-                                                            'confirm' => 'Hapus data pasien ini?',
-                                                            'method' => 'post',
-                                                        ],
-                                                        'title' => 'Hapus'
-                                                    ]) ?>
+                                                    <?php if ($row->dataForm): ?>
+                                                        <?= Html::a(
+                                                            '<i class="bi bi-pencil"></i> Edit',
+                                                            ['update', 'id' => $row->dataForm->id_form_data],
+                                                            [
+                                                                'class' => 'btn btn-white btn-sm text-warning mx-2',
+                                                                'title' => 'Edit Data'
+                                                            ]
+                                                        ) ?>
+
+                                                        <?= Html::a(
+                                                            '<i class="bi bi-printer"></i> Print',
+                                                            ['print', 'id' => $row->dataForm->id_form_data],
+                                                            [
+                                                                'class' => 'btn btn-white btn-sm text-primary mx-2',
+                                                                'title' => 'Print Data'
+                                                            ]
+                                                        ) ?>
+
+                                                        <?= Html::a(
+                                                            '<i class="bi bi-trash"></i> Hapus',
+                                                            ['delete', 'id' => $row->dataForm->id_form_data],
+                                                            [
+                                                                'class' => 'btn btn-white btn-sm text-danger mx-2',
+                                                                'data' => [
+                                                                    'confirm' => 'Hapus data pasien ini?',
+                                                                    'method' => 'post',
+                                                                ],
+                                                                'title' => 'Hapus'
+                                                            ]
+                                                        ) ?>
+
+                                                    <?php else: ?>
+
+                                                        <?= Html::a(
+                                                            '<i class="bi bi-pencil"></i> Input',
+                                                            ['create', 'id' => $row->id_registrasi],
+                                                            [
+                                                                'class' => 'btn btn-white btn-sm text-success mx-2',
+                                                                'title' => 'Input Data'
+                                                            ]
+                                                        ) ?>
+
+                                                    <?php endif; ?>
                                                 </div>
                                             </td>
                                         </tr>
