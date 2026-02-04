@@ -387,7 +387,7 @@ $formData = is_string($data->data) ? json_decode($data->data, true) : $data->dat
 </div>
 
 <?php
-$this->registerCssFile('@web/css/form-pengkajian.css');
+$this->registerCssFile('@web/css/site.css');
 $this->registerJs('
 window.onload = function() {
     window.print();
