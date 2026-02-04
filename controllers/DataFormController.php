@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\DataForm;
 use app\models\RegisterForm;
+use app\services\DataFormService;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -11,6 +12,14 @@ use Yii;
 
 class DataFormController extends Controller
 {
+    private DataFormService $service;
+
+    public function __construct($id, $module, DataFormService $service, $config = [])
+    {
+        $this->service = $service;
+        parent::__construct($id, $module, $config);
+    }
+
     public function beforeAction($action)
     {
         date_default_timezone_set('Asia/Jakarta');
@@ -20,147 +29,86 @@ class DataFormController extends Controller
 
     public function actionIndex()
     {
-        $query = RegisterForm::find()
-            ->with('dataForm');
+        $query = RegisterForm::find()->with('dataForm');
 
-        $search = Yii::$app->request->get('search');
-
-        if (!empty($search)) {
-            $query->andWhere([
-                'or',
+        if ($search = Yii::$app->request->get('search')) {
+            $query->andFilterWhere(['or',
                 ['ilike', 'nama_pasien', $search],
                 ['ilike', 'CAST(nik AS TEXT)', $search],
                 ['ilike', 'CAST(no_rekam_medis AS TEXT)', $search],
-                ['ilike', 'CAST(no_registrasi AS TEXT)', $search],
             ]);
         }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
-            'sort' => false,
         ]);
 
         if (Yii::$app->request->isAjax) {
-            return $this->renderPartial('_table', [
-                'dataProvider' => $dataProvider,
-            ]);
+            return $this->renderPartial('_table', compact('dataProvider'));
         }
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', compact('dataProvider'));
     }
 
     public function actionCreate($id)
     {
-        $registrasi = RegisterForm::findOne($id);
+        $registrasi = RegisterForm::findOne($id)
+            ?? throw new NotFoundHttpException('Registrasi tidak ditemukan');
 
-        if (!$registrasi) {
-            throw new NotFoundHttpException('Data registrasi tidak ditemukan.');
-        }
+        $form = new DataForm();
+        $form_data = Yii::$app->request->post('form_data');
 
-        $data = new DataForm();
-
-        $data->id_registrasi = $id;
-
-        if (Yii::$app->request->isPost) {
-            $formData = Yii::$app->request->post('form_data');
-            $data->data = json_encode($formData);
-            $data->id_form = 1;
-            $data->create_time_at = date('Y-m-d H:i:s');
-            $data->create_by = $formData['petugas_nama'] ?? null;
-            if ($data->save()) {
-                Yii::$app->session->setFlash('success', 'Data Pengkajian Berhasil Disimpan.');
-
+        if (Yii::$app->request->isPost && $form_data) {
+            try {
+                $data = $this->service->create($registrasi->id_registrasi, $form_data);
+                Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
                 return $this->redirect(['print', 'id' => $data->id_form_data]);
-            } else {
-                Yii::$app->session->setFlash('error', 'Data tidak boleh kosong!');
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', 'Gagal menyimpan data: ' . $e->getMessage());
             }
         }
 
-        return $this->render('create', [
-            'registrasi' => $registrasi,
-            'data' => $data
-        ]);
+        return $this->render('create', compact('registrasi', 'form'));
     }
 
     public function actionPrint($id)
     {
-        $data = DataForm::findOne($id);
-
-        if (!$data) {
-            throw new NotFoundHttpException('Data form tidak ditemukan.');
-        }
-
-        $registrasi = RegisterForm::findOne($data->id_registrasi);
-
-        if (!$registrasi) {
-            throw new NotFoundHttpException('Data registrasi tidak ditemukan.');
-        }
+        $data = DataForm::findOne($id)
+            ?? throw new NotFoundHttpException('Data tidak ditemukan');
 
         return $this->render('print', [
             'data' => $data,
-            'registrasi' => $registrasi
+            'registrasi' => $data->registrasi,
         ]);
     }
 
     public function actionUpdate($id)
     {
-        $model = DataForm::findOne($id);
-
-        if (!$model) {
-            throw new NotFoundHttpException('Data tidak ditemukan.');
-        }
-
-        $registrasi = RegisterForm::findOne($model->id_registrasi);
+        $model = DataForm::findOne($id)
+            ?? throw new NotFoundHttpException('Data tidak ditemukan');
 
         if (Yii::$app->request->isPost) {
-            $post = Yii::$app->request->post();
-
-            if (isset($post['form_data'])) {
-                $model->data = json_encode($post['form_data']);
-                $model->update_by = Yii::$app->user->id ?? 1;
-                $model->update_time_at = date('Y-m-d H:i:s');
-
-                if ($model->save(false)) {
-                    Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
-                    return $this->redirect(['index']);
-                }
-            }
+            $this->service->update($model, Yii::$app->request->post('form_data'));
+            Yii::$app->session->setFlash('success', 'Data diperbarui');
+            return $this->redirect(['index']);
         }
 
         return $this->render('edit', [
             'model' => $model,
-            'registrasi' => $registrasi,
+            'registrasi' => $model->registrasi,
         ]);
     }
 
     public function actionDelete($id)
     {
-        $transaction = Yii::$app->db->beginTransaction();
+        $model = DataForm::findOne($id)
+            ?? throw new NotFoundHttpException('Data tidak ditemukan');
 
-        try {
-            $dataForm = DataForm::findOne($id);
-            if (!$dataForm) {
-                throw new NotFoundHttpException('Data form tidak ditemukan.');
-            }
-
-            $registrasi = RegisterForm::findOne($dataForm->id_registrasi);
-            if (!$registrasi) {
-                throw new NotFoundHttpException('Data registrasi tidak ditemukan.');
-            }
-            $dataForm->delete();
-            $registrasi->delete();
-            $transaction->commit();
-
-            Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
-        } catch (\Throwable $e) {
-            $transaction->rollBack();
-            Yii::$app->session->setFlash('error', 'Gagal menghapus data.');
-            throw $e;
-        }
+        $this->service->delete($model);
+        Yii::$app->session->setFlash('success', 'Data dihapus');
 
         return $this->redirect(['index']);
     }
+
 }
