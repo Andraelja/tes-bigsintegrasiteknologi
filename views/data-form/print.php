@@ -380,7 +380,9 @@ $formData = is_string($data->data) ? json_decode($data->data, true) : $data->dat
                 </table>
             </div>
         </div>
-        <?php echo Html::a('Kembali', ['/data-form/index'], ['class' => 'btn btn-secondary btn-lg px-4']) ?>
+        <div class="no-print mt-3 text-center">
+            <?php echo Html::a('Kembali', ['/data-form/index'], ['class' => 'btn btn-secondary btn-lg px-4']) ?>
+        </div>
     </div>
 </div>
 

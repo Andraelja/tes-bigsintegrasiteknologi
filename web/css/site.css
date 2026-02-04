@@ -280,59 +280,157 @@ input::-webkit-inner-spin-button {
   font-size: 11px;
 }
 
-.form-control-sm {
-  font-size: 11px;
-  padding: 2px 5px;
-}
-
-.border-bottom-only {
-  border: none;
-  border-bottom: 1px solid #000;
-  border-radius: 0;
-  padding: 0 2px;
-}
-
-input[type="text"].inline-input {
-  border: none;
-  border-bottom: 1px solid #333;
-  width: 80px;
-  padding: 0 5px;
-}
-
-input[type="checkbox"],
-input[type="radio"] {
-  margin-right: 5px;
-}
-
+/* PRINT STYLES */
 @media print {
-  .no-print {
+  /* Sembunyikan elemen yang tidak perlu */
+  .no-print,
+  .btn,
+  button,
+  a.btn {
     display: none !important;
   }
 
-  .paper {
-    margin: 0 auto !important;
-    box-shadow: none !important;
-    background: white !important;
+  /* Reset body */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
   }
 
-  .form-kertas-container {
-    background: white !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    min-height: 100vh !important;
+  /* Container */
+  /* Custom CSS untuk Form Pengkajian Keperawatan */
+.form-kertas-container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.paper {
+  background: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  margin: 20px auto;
+}
+
+.section-title {
+  font-size: 13px;
+  padding: 5px 10px;
+}
+
+.small {
+  font-size: 11px;
+}
+
+/* PRINT STYLES */
+@media print {
+  /* Sembunyikan elemen yang tidak perlu */
+  .no-print,
+  .btn,
+  button,
+  a.btn,
+  nav,
+  .navbar,
+  footer {
+    display: none !important;
   }
 
+  /* Reset body - HAPUS SEMUA BACKGROUND */
   body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
   }
 
-  * {
-    -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
+  /* Container - HAPUS BACKGROUND & PADDING */
+  .form-kertas-container {
+    background: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
   }
+
+  /* Paper - HAPUS SHADOW & MARGIN */
+  .paper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 15mm !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  /* Hapus class utility Bootstrap yang mengganggu */
+  .py-5 {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+
+  .mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .p-5 {
+    padding: 15mm !important;
+  }
+
+  /* Page settings */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* Force print colors untuk elemen di DALAM paper */
+  .bg-secondary,
+  .bg-light,
+  .table {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Prevent page breaks */
+  .row,
+  table,
+  .section-title,
+  .border-bottom {
+    page-break-inside: avoid;
+  }
+
+  /* Font sizes */
+  body {
+    font-size: 10pt;
+  }
+
+  .small {
+    font-size: 9pt;
+  }
+
+  h4 {
+    font-size: 12pt;
+    margin: 5px 0;
+  }
+
+  h5 {
+    font-size: 11pt;
+    margin: 3px 0;
+  }
+
+  /* Table optimization */
+  .table {
+    font-size: 9pt;
+  }
+
+  .table td,
+  .table th {
+    padding: 4px;
+  }
+}
 }
 
 .table-borderless td {
