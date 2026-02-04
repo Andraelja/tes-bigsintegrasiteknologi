@@ -121,7 +121,7 @@ $formData = is_string($data->data) ? json_decode($data->data, true) : $data->dat
         </div>
         <div class="row g-0 border mb-3 small">
             <!-- Kesadaran -->
-            <div class="col-md-3 border-end p-2">
+            <div class="col-3 border-end p-2">
                 <div class="fw-bold border-bottom mb-2 pb-1 text-center">Kesadaran</div>
                 <?php foreach (['Compos mentis', 'Apatis', 'Somnolent', 'Sopor', 'Soporokoma', 'Koma'] as $k): ?>
                     <div class="form-check">
@@ -132,7 +132,7 @@ $formData = is_string($data->data) ? json_decode($data->data, true) : $data->dat
             </div>
 
             <!-- Tanda Vital -->
-            <div class="col-md-3 border-end p-2">
+            <div class="col-3 border-end p-2">
                 <div class="fw-bold border-bottom mb-2 pb-1 text-center">Tanda Vital</div>
                 <div class="mb-2">
                     <span>TD : </span>
@@ -153,7 +153,7 @@ $formData = is_string($data->data) ? json_decode($data->data, true) : $data->dat
             </div>
 
             <!-- Fungsional -->
-            <div class="col-md-3 border-end p-2">
+            <div class="col-3 border-end p-2">
                 <div class="fw-bold border-bottom mb-2 pb-1 text-center">Fungsional</div>
                 <div class="mb-2">
                     <div>1. Alat bantu :</div>
@@ -170,7 +170,7 @@ $formData = is_string($data->data) ? json_decode($data->data, true) : $data->dat
             </div>
 
             <!-- Antropometri dengan IMT -->
-            <div class="col-md-3 p-2">
+            <div class="col-3 p-2">
                 <div class="fw-bold border-bottom mb-2 pb-1 text-center">Antropometri</div>
                 <div class="mb-2">
                     <span>BB : </span>

@@ -18,7 +18,6 @@ main > .container {
   font-style: italic;
 }
 
-/* add sorting icons to gridview sort links */
 a.asc:after,
 a.desc:after {
   content: "";
@@ -59,7 +58,6 @@ a.desc:after {
   margin: 0 0 15px 0;
 }
 
-/* align the logout "link" (button in form) of the navbar */
 .nav li > form > button.logout {
   padding-top: 7px;
   color: rgba(255, 255, 255, 0.5);
@@ -257,7 +255,6 @@ input::-webkit-inner-spin-button {
   height: 300px;
 }
 
-/* Custom CSS untuk Form Pengkajian Keperawatan */
 .form-kertas-container {
   background-color: #f5f5f5;
   min-height: 100vh;
@@ -280,157 +277,68 @@ input::-webkit-inner-spin-button {
   font-size: 11px;
 }
 
-/* PRINT STYLES */
 @media print {
-  /* Sembunyikan elemen yang tidak perlu */
-  .no-print,
-  .btn,
-  button,
-  a.btn {
-    display: none !important;
-  }
-
-  /* Reset body */
-  body {
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
-
-  /* Container */
-  /* Custom CSS untuk Form Pengkajian Keperawatan */
-.form-kertas-container {
-  background-color: #f5f5f5;
-  min-height: 100vh;
-  padding: 20px 0;
-}
-
-.paper {
-  background: white;
-  width: 210mm;
-  min-height: 297mm;
-  padding: 20mm;
-  margin: 20px auto;
-}
-
-.section-title {
-  font-size: 13px;
-  padding: 5px 10px;
-}
-
-.small {
-  font-size: 11px;
-}
-
-/* PRINT STYLES */
-@media print {
-  /* Sembunyikan elemen yang tidak perlu */
-  .no-print,
-  .btn,
-  button,
-  a.btn,
-  nav,
-  .navbar,
-  footer {
-    display: none !important;
-  }
-
-  /* Reset body - HAPUS SEMUA BACKGROUND */
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-  }
-
-  /* Container - HAPUS BACKGROUND & PADDING */
-  .form-kertas-container {
-    background: none !important;
-    background-color: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    min-height: auto !important;
-  }
-
-  /* Paper - HAPUS SHADOW & MARGIN */
-  .paper {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 15mm !important;
-    box-shadow: none !important;
-    background: white !important;
-  }
-
-  /* Hapus class utility Bootstrap yang mengganggu */
-  .py-5 {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-  }
-
-  .shadow-lg {
-    box-shadow: none !important;
-  }
-
-  .mx-auto {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-
-  .p-5 {
-    padding: 15mm !important;
-  }
-
-  /* Page settings */
   @page {
     size: A4 portrait;
-    margin: 0;
+    margin: 8mm 10mm;
   }
 
-  /* Force print colors untuk elemen di DALAM paper */
-  .bg-secondary,
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  main,
+  .container,
+  .container-fluid {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  nav,
+  footer,
+  .navbar,
+  .footer,
+  .no-print,
+  .btn,
+  a {
+    display: none !important;
+  }
+
+  .form-kertas-container {
+    background: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .paper {
+    width: 210mm !important;
+    height: auto !important;
+    min-height: unset !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  table {
+    page-break-inside: auto;
+    font-size: 9pt;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
   .bg-light,
+  .bg-secondary,
   .table {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
-  /* Prevent page breaks */
-  .row,
-  table,
-  .section-title,
-  .border-bottom {
-    page-break-inside: avoid;
-  }
-
-  /* Font sizes */
-  body {
-    font-size: 10pt;
-  }
-
-  .small {
-    font-size: 9pt;
-  }
-
-  h4 {
-    font-size: 12pt;
-    margin: 5px 0;
-  }
-
-  h5 {
-    font-size: 11pt;
-    margin: 3px 0;
-  }
-
-  /* Table optimization */
-  .table {
-    font-size: 9pt;
-  }
-
-  .table td,
-  .table th {
-    padding: 4px;
-  }
-}
 }
 
 .table-borderless td {
